@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/boardSelect.css" />
+    <link rel="icon" href="../../assets/favicon.ico">
+    <title>게시판</title>
+</head>
+<body>
+    <a href="../index.html"><button>뒤로</button></a>
+    <a href="./boardInsert.html"><button>글쓰기</button></a>
+
+    <hr />
+    
+    <div id="boardContent">
+        <table>
+            <thead>
+                <tr>
+                    <td>번호</td>
+                    <td>제목</td>
+                    <td>작성자</td>
+                    <td>조회수</td>
+                    <td>등록일</td>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+        
+        <hr />
+        <input type="text" id="text" />
+        <button id="search">검색</button>
+        <div id="pagenation"></div>
+    </div>
+
+    <script>
+        const tbody = document.getElementById('tbody');
+        const pagenation = document.getElementById('pagenation');
+        const boardContent = document.getElementById('boardContent');
+        const text = document.getElementById('text');
+        const search = document.getElementById('search');
+
+        // 페이지 로드 시 최근 글 목록 받아오기
+        handleData();
+
+        // FIXME: 왜인지 모르겠는데 엔터로 최초 검색시에만 get요청 두번 됨
+        // TODO: isComposing 이걸로 해결하긴 했는데 뭔지 모르겠음
+        text.addEventListener('keydown', ({key, isComposing}) => {
+            if(isComposing) {
+                return
+            }
+            if(key !== 'Enter') {
+                return
+            }
+            handleSearch()
+        });
+
+        // 제목 검색 이벤트
+        search.addEventListener('click', async function() {
+            handleSearch();
+        })
+
+        // 제목 검색 함수
+        async function handleSearch(text1, page) {
+            text1 = text.value;
+            page = 1;
+            console.log("검색어 => ", text1);
+            const list = await getData(text1, page);
+            boardList(list); // 게시글 목록
+            pageList(list); // 페이지네이션
+        }
+
+        // 페이지 로드 & 검색 시 전체 실행 함수
+        async function handleData(text1, page) {
+            text1 = text.value;
+            // fetch로 요청한 response 를 전역변수에 저장 하는 법
+            const list = await getData(text1, page);
+            boardList(list); // 게시글 목록
+            pageList(list); // 페이지네이션
+            console.log("최신 페이지 => ", list);
+            pagenation.firstElementChild.classList.add('recent-btn');
+            pagenation.firstElementChild.setAttribute("disabled", true);
+        }
+
+        // getData로부터 게시글 목록 생성
+        function boardList(data) {
+            tbody.innerHTML = "";
+            for(let tmp of data.result) {
+                tbody.innerHTML += 
+                `<tr data-id=${tmp._id}>` +
+                    `<td>${tmp._id}</td>` +
+                    `<td>${tmp.title}</td>` +
+                    `<td>${tmp.writer}</td>` +
+                    `<td>${tmp.hit}</td>` +
+                    `<td>${tmp.regdate}</td>` +
+                `</td>`;
+            }
+            boardOne();
+        }
+
+        // getData로부터 페이지네이션 생성
+        function pageList(data) {
+            pagenation.innerHTML = "";
+            let page;
+            // data.total에서 page개수 정하기
+            if(data.total % 5 == 0) {
+                // 5의 배수로 떨어지면 맨 뒤의 떨이페이지 필요x
+                page = Math.floor((data.total / 5));
+            } else {
+                page = Math.floor((data.total / 5) +1);
+            }
+            // 페이지 버튼이 1부터 시작할 수 있도록 i와 page에 1을 더해준다
+            for(let i = 1; i < page + 1; i++) {
+                // 페이지 개수만큼 버튼 생성
+                let newButton = document.createElement('button');
+                newButton.innerHTML = i;
+                // 각 버튼 element에 dataset.id 넣기
+                newButton.setAttribute("data-id", i);
+                newButton.setAttribute("class", "btn");
+                // pagenation div에 생성한 버튼 추가
+                pagenation.appendChild(newButton);
+            }
+        }
+
+        tbody.addEventListener('click', (e) => {
+            let target = e.target.parentNode.dataset.id;
+            location.href = `./boardSelectOne.html?no=${target}`;
+        })
+
+        function boardOne() {
+            for(let i = 0; i < tbody.childElementCount; i++) {
+                tbody.children[i].classList.add('board-one');
+            }
+        }
+
+        // 이벤트 버블링 활용해서 버튼 상위 div에 클릭이벤트 하나만 만들기 => 성능에 좋다
+        pagenation.addEventListener('click', async function(e) {
+            let btn = e.target;
+            let count = this.childElementCount
+            // 실제 클릭한 요소(e.target)와 실제 이벤트가 만들어진 요소(e.currentTarget)가
+            // 다를때만 동작하게 하여 이벤트 버블링을 막음
+            if(btn != e.currentTarget) {
+                console.log(count);
+                // 자식 btn 들 초기화 시켜주기
+                for(let i =0; i < count; i++) {
+                    this.children[i].classList.remove('recent-btn');
+                    this.children[i].removeAttribute("disabled");
+                }
+                // e.target으로 클릭한 버튼 찾아내서 서버에서 정보가져오기
+                let text1 = text.value;
+                let list = await getData(text1, btn.dataset.id);
+                boardList(list);
+                console.log("페이지 번호 => ", btn.dataset.id, list);
+                // 방금 활성화 시킨 btn 상태변경
+                btn.classList.add('recent-btn');
+                btn.setAttribute("disabled", true);
+            }
+        })
+
+        // fetch로 get요청
+        function getData(text, page) {
+            // 응답받은 데이터를 전역변수에 반환
+            return new Promise((resolve, reject) => {
+                fetch(`http://127.0.0.1:8088/board/select.json?text=${text}&page=${page}`)
+                .then((response) => response.json())
+                .then(data => {
+                    resolve(data);
+                });
+            });
+        }
+    </script>
+    
+</body>
+</html>

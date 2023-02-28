@@ -1,0 +1,37 @@
+td {
+    padding: 0 20px;
+}
+#pagenation {
+    display: inline;
+    margin: auto;
+}
+.btn {
+    border: 0;
+    background-color: white;
+    font-size: 16px;
+    margin-left: 10px;
+}
+.btn:hover {
+    cursor: pointer;
+    background-color: deeppink;
+    border-radius: 25%;
+    color: white;
+}
+.recent-btn {
+    border: 0;
+    color: deeppink;
+}
+.recent-btn:hover {
+    cursor: default;
+    background-color: white;
+    color: deeppink;
+}
+.board-one:hover {
+    cursor: pointer;
+    background-color: deeppink;
+    color: white;
+}
+table {
+    /* border-collapse: collapse; */
+    border-spacing: 0;
+}
