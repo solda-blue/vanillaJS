@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .container { display: flex; justify-content : center; }
-        .write-box > * { display: block; margin: 10px; }
+        .container { display: flex; justify-content : center; margin-top: 50px; }
+        .write-box > * { display: block; margin: 5px 0; }
         input, textarea { width: 100%; resize: none; }
     </style>
     <title>글쓰기</title>
@@ -15,18 +15,36 @@
     <div class="container">
         <div class="write-box">
             <label>제목</label>
-            <input type="text" id="title" />
+            <input type="text" id="title" maxlength="20" />
             <label>작성자</label>
-            <input type="text" id="writer" />
+            <input type="text" id="writer" maxlength="10" />
             <label>내용</label>
-            <textarea id="content" cols="30" rows="10"></textarea>
-            <button id="insert">완료</button>
-            <a href="./boardSelect.html"><button id="insert">뒤로</button></a>
+            <textarea id="content" cols="30" rows="10" maxlength="200"></textarea>
+            <div style="display: flex; justify-content: right;font-size: small;">
+                <span id="text-length"></span>
+                <span id="length"></span>
+            </div>
+            <hr />
+            <div style="display: flex;justify-content: space-between;">
+                <div>
+                    <a href="./boardSelect.html"><button>뒤로</button></a>
+                </div>
+                <div>
+                    <button id="insert">완료</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         const submit = document.getElementById('insert');
+        const textArea = document.getElementById('content');
+        const maxLength = document.getElementById('length');
+
+        maxLength.innerHTML = "/" + textArea.getAttribute('maxlength');
+        textArea.addEventListener('input', () => {
+            document.getElementById('text-length').innerHTML = textArea.value.length;
+        })
         
         function handleInsertBoard() {
             // input value 가져오기
@@ -80,8 +98,19 @@
             });
         }
 
-        submit.addEventListener('click',function() {
-            handleInsertBoard();
+        submit.addEventListener('click', function() {
+            if(document.getElementById('title').value == "") {
+                alert('제목 미작성');
+                return false
+            } else if(document.getElementById('writer').value == "") {
+                alert('작성자 미작성');
+                return false
+            } else if(document.getElementById('content').value == "") {
+                alert('내용 미작성');
+                return false
+            } else {
+                handleInsertBoard();
+            }
         });
     </script>
 </body>
