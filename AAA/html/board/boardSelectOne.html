@@ -4,19 +4,67 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .header { display: grid; grid-template-columns: 5fr 1fr 3fr; }
+        .container { margin-top: 50px; }
+        #content { width: 100%; min-height: 300px; border:1px black solid;}
+    </style>
     <title>게시글 보기</title>
 </head>
 <body>
-    <div>
-        <h1>Hello</h1>
+    <div class="container">
+        <h4 id="title"></h4>
+        <div class="header">
+            <span id="writer"></span>
+            <span id="regdate"></span>
+            <span id="regdate"></span> 
+        </div>
+        <br />
+        <div id="content"></div>
+    </div>
+
+    <div style="padding: 10px;display: flex;justify-content: space-between;">
+        <div>
+            <a href="./boardSelect.html"><button>뒤로</button></a>
+        </div>
+        <div>
+            <a href=""><button>수정</button></a>
+            <a href=""><button>삭제</button></a>
+        </div>
     </div>
 
     <script>
+        const header = document.querySelector('.header');
         function searchParam(query) {
             return new URLSearchParams(location.search).get(query);
         };
         let query = searchParam('no');
         console.log(query);
+
+        handleData();
+
+        async function handleData() {
+            // 이게 구조분해할당인가 뭐신가인가
+            const [data] = await getSelectOne();
+            document.getElementById('title').innerHTML = data.title;
+            header.children[0].innerHTML = `작성자 : ${data.writer}`
+            header.children[1].innerHTML = `조회수 : ${data.hit}`
+            header.children[2].innerHTML = `등록일 : ${data.regdate}`
+            document.getElementById('content').innerHTML = data.content;
+        }
+
+        function getSelectOne() {
+            return new Promise((resolve, reject) => {
+                fetch(`http://127.0.0.1:8088/board/selectone.json?no=${query}`)
+                .then((response) => response.json())
+                .then(data => {
+                    resolve(data.result);
+                });
+            });
+        }
+        
+        getSelectOne();
+      
     </script>
 </body>
 </html>

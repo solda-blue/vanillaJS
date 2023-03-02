@@ -27,7 +27,6 @@
 
     <script>
         const submit = document.getElementById('insert');
-
         
         function handleInsertBoard() {
             // input value 가져오기
@@ -64,6 +63,7 @@
             xhr.open('POST', url, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             // ["Access-Control-Allow-Origin"] = 'http://127.0.0.1:8080/'
+
             xhr.send(JSON.stringify(obj));
             console.log('req => ', obj);
 

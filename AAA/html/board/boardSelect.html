@@ -90,10 +90,10 @@
             for(let tmp of data.result) {
                 tbody.innerHTML += 
                 `<tr data-id=${tmp._id}>` +
-                    `<td>${tmp._id}</td>` +
+                    `<td style="text-align: center;">${tmp._id}</td>` +
                     `<td>${tmp.title}</td>` +
                     `<td>${tmp.writer}</td>` +
-                    `<td>${tmp.hit}</td>` +
+                    `<td style="text-align: center;">${tmp.hit}</td>` +
                     `<td>${tmp.regdate}</td>` +
                 `</td>`;
             }
@@ -105,11 +105,11 @@
             pagenation.innerHTML = "";
             let page;
             // data.total에서 page개수 정하기
-            if(data.total % 5 == 0) {
-                // 5의 배수로 떨어지면 맨 뒤의 떨이페이지 필요x
-                page = Math.floor((data.total / 5));
+            if(data.total % 10 == 0) {
+                // 10의 배수로 떨어지면 맨 뒤의 떨이페이지 필요x
+                page = Math.floor((data.total / 10));
             } else {
-                page = Math.floor((data.total / 5) +1);
+                page = Math.floor((data.total / 10) +1);
             }
             // 페이지 버튼이 1부터 시작할 수 있도록 i와 page에 1을 더해준다
             for(let i = 1; i < page + 1; i++) {

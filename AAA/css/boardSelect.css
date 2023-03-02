@@ -1,5 +1,12 @@
 td {
-    padding: 0 20px;
+    padding: 0 10px;
+    min-width: 40px;
+}
+thead {
+    font-weight: bold;
+}
+thead td {
+    text-align: center;
 }
 #pagenation {
     display: inline;
