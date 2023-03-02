@@ -164,9 +164,9 @@
             // 응답받은 데이터를 전역변수에 반환
             return new Promise((resolve, reject) => {
                 fetch(`http://127.0.0.1:8088/board/select.json?text=${text}&page=${page}`)
-                .then((response) => response.json())
-                .then(data => {
-                    resolve(data);
+                    .then((response) => response.json())
+                    .then(data => {
+                        resolve(data);
                 });
             });
         }
