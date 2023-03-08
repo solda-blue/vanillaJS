@@ -29,7 +29,7 @@
                     <button>다음글</button>
                 </div>
                 <div>
-                    <a href=""><button>수정</button></a>
+                    <button onclick="handleUpdate()">수정</button>
                     <button>삭제</button>
                 </div>
             </div>
@@ -67,8 +67,11 @@
                 });
             });
         }
-        
-        getSelectOne();
+        // getSelectOne();
+
+        function handleUpdate() {
+            location.href = `./updateBoard.html?no=${query}`;
+        }
       
     </script>
 </body>

@@ -27,19 +27,28 @@
             <hr />
             <div style="display: flex;justify-content: space-between;">
                 <div>
-                    <a href="./boardSelect.html"><button>뒤로</button></a>
+                    <button id="cancer">취소</button>
                 </div>
                 <div>
-                    <button id="insert">완료</button>
+                    <button id="update">수정</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const submit = document.getElementById('insert');
+        const title = document.getElementById('title');
+        const writer = document.getElementById('writer');
         const textArea = document.getElementById('content');
         const maxLength = document.getElementById('length');
+        const update = document.getElementById('update');
+        function searchParam(query) {
+            return new URLSearchParams(location.search).get(query);
+        }
+        let query = searchParam('no');
+        console.log(query);
+
+        handleData();
 
         maxLength.innerHTML = "/" + textArea.getAttribute('maxlength');
         textArea.addEventListener('input', () => {
@@ -48,25 +57,57 @@
 
         async function handleData() {
             const [data] = await getSelectOne();
-            document.getElementById('title')
+            console.log(data)
+            title.value = data.title;
+            writer.value = data.writer;
+            textArea.innerHTML = data.content;
+            document.getElementById('text-length').innerHTML = textArea.value.length;
         }
         
 
-        submit.addEventListener('click', function() {
-            if(document.getElementById('title').value == "") {
+        update.addEventListener('click', function() {
+            if(title.value == "") {
                 alert('제목 미작성');
                 return false
-            } else if(document.getElementById('writer').value == "") {
+            } else if(writer.value == "") {
                 alert('작성자 미작성');
                 return false
-            } else if(document.getElementById('content').value == "") {
+            } else if(textArea.value == "") {
                 alert('내용 미작성');
                 return false
             } else {
-                handleInsertBoard();
+                handleUpdateBoard();
             }
         });
 
+        function handleUpdateBoard() {
+            fetch(`http://127.0.0.1:8088/board/update.json`, {
+                // 옵션 사항들
+                method : "PUT",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                // 제이슨 형태로 바꿔주기 => 변수로 만들어서 집어넣는게 깔끔할 듯?
+                body : JSON.stringify({
+                    no : query,
+                    title : title.value,
+                    writer : writer.value,
+                    content : textArea.value,
+                })
+            }).then((response) => response.json())
+            .then((data) => {
+                if(data.status === 200) {
+                    alert('수정이 완료되었습니다.');
+                    test();
+                }
+            });
+        }
+
+        const test = () => {
+            location.href = `./boardSelectOne.html?no=${query}`;
+        }
+
+        // 원래 작성된 글 가져오기
         function getSelectOne() {
             return new Promise((resolve, reject) => {
                 fetch(`http://127.0.0.1:8088/board/selectone.json?no=${query}`)
@@ -76,6 +117,10 @@
                 });
             });
         }
+
+        document.getElementById('cancer').addEventListener('click', () => {
+            location.href = `./boardSelectOne.html?no=${query}`;
+        })
     </script>
 </body>
 </html>
