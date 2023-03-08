@@ -66,7 +66,6 @@
         async function handleSearch(text1, page) {
             text1 = text.value;
             page = 1;
-            console.log("검색어 => ", text1);
             const list = await getData(text1, page);
             boardList(list); // 게시글 목록
             pageList(list); // 페이지네이션
@@ -79,7 +78,6 @@
             const list = await getData(text1, page);
             boardList(list); // 게시글 목록
             pageList(list); // 페이지네이션
-            console.log("최신 페이지 => ", list);
             pagenation.firstElementChild.classList.add('recent-btn');
             pagenation.firstElementChild.setAttribute("disabled", true);
         }
@@ -124,9 +122,11 @@
             }
         }
 
+        // 게시글 클릭시 조회수 1증가, 페이지로 이동
         tbody.addEventListener('click', (e) => {
             let target = e.target.parentNode.dataset.id;
             location.href = `./boardSelectOne.html?no=${target}`;
+            updateHit(target);
         })
 
         function boardOne() {
@@ -142,7 +142,6 @@
             // 실제 클릭한 요소(e.target)와 실제 이벤트가 만들어진 요소(e.currentTarget)가
             // 다를때만 동작하게 하여 이벤트 버블링을 막음
             if(btn != e.currentTarget) {
-                console.log(count);
                 // 자식 btn 들 초기화 시켜주기
                 for(let i =0; i < count; i++) {
                     this.children[i].classList.remove('recent-btn');
@@ -152,7 +151,6 @@
                 let text1 = text.value;
                 let list = await getData(text1, btn.dataset.id);
                 boardList(list);
-                console.log("페이지 번호 => ", btn.dataset.id, list);
                 // 방금 활성화 시킨 btn 상태변경
                 btn.classList.add('recent-btn');
                 btn.setAttribute("disabled", true);
@@ -170,6 +168,21 @@
                 });
             });
         }
+
+        // 조회수 증가 / fetch로 put요청 
+        function updateHit(no) {
+            // 항상 url 확인 좀 하자
+            fetch(`http://127.0.0.1:8088/board/updatehit.json?no=${no}`, {
+                method: "PUT",
+                // body : JSON.stringify({}), 바디 없을 땐 생략가능한가?
+                headers : {
+                    "Content-Type":"application/json"
+                }
+            })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+        }
+
     </script>
     
 </body>

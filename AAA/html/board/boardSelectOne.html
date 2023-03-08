@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .header { display: grid; grid-template-columns: 5fr 1fr 3fr; }
-        .container { margin-top: 50px; }
+        .header { display: grid; grid-template-columns: 6fr 2fr 5fr; }
+        .container { margin-top: 50px; padding: 20px;}
         #content { width: 100%; min-height: 300px; border:1px black solid;}
     </style>
     <title>게시글 보기</title>
@@ -20,19 +20,20 @@
             <span id="regdate"></span> 
         </div>
         <br />
-        <div id="content"></div>
+            <div id="content"></div>
+            
+            <div style="padding: 10px;display: flex;justify-content: space-between;">
+                <div>
+                    <a href="./boardSelect.html"><button>뒤로</button></a>
+                    <button>이전글</button>
+                    <button>다음글</button>
+                </div>
+                <div>
+                    <a href=""><button>수정</button></a>
+                    <button>삭제</button>
+                </div>
+            </div>
     </div>
-
-    <div style="padding: 10px;display: flex;justify-content: space-between;">
-        <div>
-            <a href="./boardSelect.html"><button>뒤로</button></a>
-        </div>
-        <div>
-            <a href=""><button>수정</button></a>
-            <a href=""><button>삭제</button></a>
-        </div>
-    </div>
-
     <script>
         const header = document.querySelector('.header');
         function searchParam(query) {
@@ -47,9 +48,13 @@
             // 이게 구조분해할당인가 뭐신가인가
             const [data] = await getSelectOne();
             document.getElementById('title').innerHTML = data.title;
-            header.children[0].innerHTML = `작성자 : ${data.writer}`
-            header.children[1].innerHTML = `조회수 : ${data.hit}`
-            header.children[2].innerHTML = `등록일 : ${data.regdate}`
+            header.children[0].innerHTML = `작성자 : ${data.writer}`;
+            header.children[1].innerHTML = `조회수 : ${data.hit}`;
+            if(data.update1 !== "") {
+                header.children[2].innerHTML = `등록일 : ${data.update1}(수정됨)`;
+            } else {
+                header.children[2].innerHTML = `등록일 : ${data.regdate}`;
+            }
             document.getElementById('content').innerHTML = data.content;
         }
 
