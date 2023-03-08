@@ -5,18 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .header { display: grid; grid-template-columns: 6fr 2fr 5fr; }
-        .container { margin-top: 50px; padding: 20px;}
-        #content { width: 100%; min-height: 300px; border:1px black solid;}
+        .header { display: grid; grid-template-columns:8fr 2fr 2fr 5fr; }
+        .container { padding: 20px;}
+        #content { width: 100%; min-height: 250px;}
     </style>
     <title>게시글 보기</title>
 </head>
 <body>
     <div class="container">
-        <h4 id="title"></h4>
+        <div style="display: flex;justify-content: space-between; padding: 5px;">
+            <span id="title" style="font-size:larger; font-weight: bold;"></span>
+            <span id="no"></span>
+        </div>
+        <hr />
         <div class="header">
             <span id="writer"></span>
-            <span id="regdate"></span>
+            <span id="hit"></span>
+            <span id="like"></span>
             <span id="regdate"></span> 
         </div>
         <br />
@@ -24,9 +29,9 @@
             
             <div style="padding: 10px;display: flex;justify-content: space-between;">
                 <div>
-                    <a href="./boardSelect.html"><button>뒤로</button></a>
-                    <button>이전글</button>
-                    <button>다음글</button>
+                    <a href="./boardSelect.html"><button>목록</button></a>
+                    <button id="prevno" style="display: none;">이전글</button>
+                    <button id="nextno" style="display: none;">다음글</button>
                 </div>
                 <div>
                     <button onclick="handleUpdate()">수정</button>
@@ -36,6 +41,8 @@
     </div>
     <script>
         const header = document.querySelector('.header');
+        let prevno;
+        let nextno;
         function searchParam(query) {
             return new URLSearchParams(location.search).get(query);
         };
@@ -44,16 +51,34 @@
 
         handleData();
 
+        document.getElementById('prevno').addEventListener('click', async function () {
+            location.href = `./boardSelectOne.html?no=${prevno}`;
+        });
+        document.getElementById('nextno').addEventListener('click', async function () {
+            location.href = `./boardSelectOne.html?no=${nextno}`;
+        });
+
         async function handleData() {
+            prevno = await getPrevNo();
+            nextno = await getNextNo();
+            if(prevno > 0) {
+                document.getElementById('prevno').style.display = 'inline';
+            }
+            if(nextno !== 0) {
+                document.getElementById('nextno').style.display = 'inline';
+            }
             // 이게 구조분해할당인가 뭐신가인가
             const [data] = await getSelectOne();
+            document.getElementById('no').innerHTML = `no : ${data._id}`;
             document.getElementById('title').innerHTML = data.title;
+            // header.children[0].innerHTML = `번호 : ${data._id}`;
             header.children[0].innerHTML = `작성자 : ${data.writer}`;
             header.children[1].innerHTML = `조회수 : ${data.hit}`;
+            header.children[2].innerHTML = `추천수 : ${data.like}`;
             if(data.update1 !== "") {
-                header.children[2].innerHTML = `등록일 : ${data.update1}(수정됨)`;
+                header.children[3].innerHTML = `등록일 : ${data.update1}(수정됨)`;
             } else {
-                header.children[2].innerHTML = `등록일 : ${data.regdate}`;
+                header.children[3].innerHTML = `등록일 : ${data.regdate}`;
             }
             document.getElementById('content').innerHTML = data.content;
         }
@@ -68,6 +93,25 @@
             });
         }
         // getSelectOne();
+
+        function getPrevNo() {
+            return new Promise((resolve, reject) => {
+                fetch(`http://127.0.0.1:8088/board/prevno.json?no=${query}`)
+                .then((res) => res.json())
+                .then(data => {
+                    resolve(data.prevno);
+                })
+            })
+        }
+        function getNextNo() {
+            return new Promise((resolve, reject) => {
+                fetch(`http://127.0.0.1:8088/board/nextno.json?no=${query}`)
+                .then((res) => res.json())
+                .then(data => {
+                    resolve(data.nextno);
+                })
+            })
+        }
 
         function handleUpdate() {
             location.href = `./updateBoard.html?no=${query}`;
