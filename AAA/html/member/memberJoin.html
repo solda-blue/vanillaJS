@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../css/join.css" />
     <script type="text/javascript" src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>회원가입</title>
 </head>
 
@@ -13,18 +14,18 @@
     <div class="container">
         <div class="form-area">
             <div class="input-box">
-                <label class="lbl-input">아이디</label>
+                <label class="lbl-input">아이디*</label>
                 <input type="text" class="input-text" id="inputId" 
                     placeholder="아이디를 입력하세요" autofocus maxlength="13" /> <br />
                 <span class="alert" id="alertId"></span>
             </div>
             <div class="input-box" style="margin-top:-10px;">
-                <label class="lbl-input">비밀번호</label>
+                <label class="lbl-input">비밀번호*</label>
                 <input type="password" class="input-text" id="inputPw1"
                     placeholder="비밀번호를 입력하세요" maxlength="16" />
             </div>
             <div class="input-box" style="margin-top: -10px;">
-                <label class="lbl-input">비밀번호 확인</label>
+                <label class="lbl-input">비밀번호 확인*</label>
                 <input type="password" class="input-text" id="inputPw2"
                     placeholder="비밀번호를 다시 입력하세요" maxlength="16" /> <br />
                 <span class="alert" id="alertPw"></span>
@@ -33,18 +34,18 @@
             <hr style="width:96%; margin-left: 13px;margin-top: -8px;" />
 
             <div class="input-box">
-                <label class="lbl-input">이름</label>
+                <label class="lbl-input">이름*</label>
                 <input type="text" class="input-text" placeholder="이름을 입력하세요" />
             </div>
             <div class="input-box">
-                <label class="lbl-input">성별</label>
-                <input type="radio" name="gender" value="M" checked /> 
+                <label class="lbl-input">성별*</label>
+                <input type="radio" name="gender" value="M" /> 
                     <label class="lbl-radio">남성</label>
                 <input type="radio" name="gender" value="F" />
                     <label class="lbl-radio">여성</label>
             </div>
             <div class="input-box">
-                <label class="lbl-input">e-mail</label>
+                <label class="lbl-input">e-mail*</label>
                 <input type="text" class="input-email1" placeholder="이메일을 입력하세요" />
                 <span>@</span>
                 <input type="text" class="input-email2" id="emailAddr" readonly />
@@ -102,10 +103,69 @@
                 <input type="checkbox" name="inst" /> <label style="font-size: 14px;">드럼</label>
             </div> -->
 
+            <div style="float: right;">
+                <a href="../index.html"><button>홈으로</button></a>
+                <button id="join">가입하기</button>
+            </div>
+
         </div>
     </div>
 
     <script>
+
+        const join = document.getElementById('join');
+        const input = document.querySelectorAll('input');
+
+        function handleInsertData() {
+            let gender;
+            document.getElementsByName('gender').forEach((node) => {
+                if(node.checked) {
+                    gender = node.value;
+                } else {
+                    gender = "N"
+                }
+            })
+            let info = {
+                "id"      : input[0].value,
+                "pw"      : input[1].value,
+                "name"    : input[3].value,
+                "gender"  : gender,
+                "email"   : input[6].value + "@" + input[7].value,
+                "phone1"  : input[8].value + input[9].value + input[10].value,
+                "phone2"  : input[11].value.replaceAll("-", ""),
+                "pcode"   : input[12].value,
+                "address" : input[13].value + " " + input[14].value
+            };
+            console.log(info);
+            // const xhr = new XMLHttpRequest();
+            // const url = 'http://127.0.0.1:8088/member/insert.json';
+            // xhr.open('POST', url, true);
+            // xhr.setRequestHeader('Content-Type', 'application/json');
+            // xhr.send(JSON.stringify(info));
+            // console.log('req =>', info);
+
+            // xhr.addEventListener('load', function(e) {
+            //     const response = JSON.parse(xhr.response);
+            //     console.log('res => ', response);
+            //     if(response.status === 200) {
+            //         alert('회원가입 완료');
+            //     }
+            // })
+
+            fetch('http://127.0.0.1:8088/member/insert.json', {
+                method : "POST",
+                headers : {
+                    "Content-Type": "application/json"
+                },
+                body : JSON.stringify(info)
+            })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+        }
+
+        join.addEventListener('click', () => {
+            handleInsertData();
+        })
 
         // 비밀번호 입력
         const pw1 = document.querySelector('#inputPw1');

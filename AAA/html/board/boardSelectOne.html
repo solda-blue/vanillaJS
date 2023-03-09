@@ -22,22 +22,29 @@
             <span id="writer"></span>
             <span id="hit"></span>
             <span id="like"></span>
-            <span id="regdate"></span> 
+            <span id="regdate"></span>
         </div>
         <br />
-            <div id="content"></div>
-            
-            <div style="padding: 10px;display: flex;justify-content: space-between;">
-                <div>
-                    <a href="./boardSelect.html"><button>목록</button></a>
-                    <button id="prevno" style="display: none;">이전글</button>
-                    <button id="nextno" style="display: none;">다음글</button>
-                </div>
-                <div>
-                    <button onclick="handleUpdate()">수정</button>
-                    <button>삭제</button>
-                </div>
+        <div id="content"></div>
+
+        <div style="display: flex;justify-content: center;">
+            <span id="like"></span>
+        </div>
+        <div style="display: flex;justify-content: center;">
+            <button id="likeBtn">추천</button>
+        </div>
+        <hr />
+        <div style="padding: 10px;display: flex;justify-content: space-between;">
+            <div>
+                <a href="./boardSelect.html"><button>목록</button></a>
+                <button id="prevno" style="display: none;">이전글</button>
+                <button id="nextno" style="display: none;">다음글</button>
             </div>
+            <div>
+                <button onclick="handleUpdate()">수정</button>
+                <button>삭제</button>
+            </div>
+        </div>
     </div>
     <script>
         const header = document.querySelector('.header');
