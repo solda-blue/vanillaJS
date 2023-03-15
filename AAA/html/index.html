@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/general.js"></script>
     <title>Home</title>
 </head>
 <body>
@@ -14,38 +15,21 @@
     <p id="hi"></p>
 
     <script>
-
         onload = function() {
-            if(sessionStorage.getItem("TOKEN") !== null ) {
-                handleUser();
-                document.querySelector('a').style.display = 'none';
-            }
-        } 
+    if(sessionStorage.getItem("TOKEN") !== null ) {
+        handleUser();
+        document.querySelector('a').style.display = 'none';
+    }
+} 
 
-        async function handleUser() {
-            const user = await handleData();
-            console.log(user);
-            let hi = document.getElementById('hi')
-            if(user.status === 200) {
-                hi.innerText = `${user.result.username} 님 안녕하세요`;
-            }
-        }
-    
-        function handleData() {
-                let token = sessionStorage.getItem("TOKEN");
-                return new Promise ((resolve, reject) => {
-                    fetch(`http://127.0.0.1:8088/member/selectone.json`, {
-                        method : "GET",
-                        headers : {
-                            "token" : token
-                        }
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        resolve(data);
-                    })
-                })
-        }
+async function handleUser() {
+    const user = await handleToken();
+    console.log(user);
+    let hi = document.getElementById('hi')
+    if(user.status === 200) {
+        hi.innerText = `${user.result.username} 님 안녕하세요`;
+    }
+}
     </script>
     
 </body>

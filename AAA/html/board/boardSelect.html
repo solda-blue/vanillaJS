@@ -10,7 +10,7 @@
 </head>
 <body>
     <a href="../index.html"><button>뒤로</button></a>
-    <a href="./boardInsert.html"><button>글쓰기</button></a>
+    <button id="write">글쓰기</button>
 
     <hr />
     
@@ -42,6 +42,15 @@
         const boardContent = document.getElementById('boardContent');
         const text = document.getElementById('text');
         const search = document.getElementById('search');
+        const write = document.getElementById('write');
+
+        write.addEventListener('click', function() {
+            if(sessionStorage.getItem("TOKEN") !== null) {
+                location.href = 'boardInsert.html';
+            } else {
+                alert('로그인이 필요합니다.');
+            }
+        })
 
         // 페이지 로드 시 최근 글 목록 받아오기
         handleData();

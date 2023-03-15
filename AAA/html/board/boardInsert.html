@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../../js/general.js"></script>
     <style>
         .container { display: flex; justify-content : center; margin-top: 50px; }
         .write-box > * { display: block; margin: 5px 0; }
@@ -16,8 +17,6 @@
         <div class="write-box">
             <label>제목</label>
             <input type="text" id="title" maxlength="20" />
-            <label>작성자</label>
-            <input type="text" id="writer" maxlength="10" />
             <label>내용</label>
             <textarea id="content" cols="30" rows="10" maxlength="200"></textarea>
             <div style="display: flex; justify-content: right;font-size: small;">
@@ -46,10 +45,12 @@
             document.getElementById('text-length').innerHTML = textArea.value.length;
         })
         
-        function handleInsertBoard() {
+        async function handleInsertBoard() {
+            const user = await handleToken();
+            
             // input value 가져오기
             let title = document.getElementById('title').value;
-            let writer = document.getElementById('writer').value;
+            let writer = user.result._id;
             let content = document.getElementById('content').value;
             
             // json 형식으로 담기
@@ -101,9 +102,6 @@
         submit.addEventListener('click', function() {
             if(document.getElementById('title').value == "") {
                 alert('제목 미작성');
-                return false
-            } else if(document.getElementById('writer').value == "") {
-                alert('작성자 미작성');
                 return false
             } else if(document.getElementById('content').value == "") {
                 alert('내용 미작성');
