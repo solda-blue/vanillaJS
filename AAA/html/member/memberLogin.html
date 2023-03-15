@@ -4,10 +4,69 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .login-box { width: 240px; }
+        .input-box { margin: 5px; }
+        label { display: inline-block; width: 70px; }
+    </style>
     <title>로그인 페이지</title>
 </head>
 <body>
-    <a href="./memberJoin.html">회원가입</a>
+    <a href="../index.html"><button>뒤로</button></a>
+    <a href="./memberJoin.html"><button>회원가입</button></a>
+    <hr />
+
+        <div class="login-box">
+            <div class="input-box">
+                <label>아이디</label>
+                <input type="text" id="id" />
+            </div>
+            <div class="input-box">
+                <label>비밀번호</label>
+                <input type="password" id="pw" />
+            </div>
+            <input type="button" id="btn" value="로그인" style="float: right; margin-right: 15px;" />
+        </div>
+
+    <script>
+        const id = document.getElementById('id');
+        const pw = document.getElementById('pw');
+        
+        // 이벤트 발생시 바디 값 가져오기
+        document.getElementById('btn').addEventListener('click', function() {
+            let body = {
+                    id : id.value,
+                    pw : pw.value
+                }
+            handleLogin(body);
+        })
+
+        // fetch로 받아온 값 변수에 저장하고 세션에 토큰 저장하기
+        const handleLogin = async (body) => {
+            const result = await handlePost(body);
+            if(result.status === 200) {
+                sessionStorage.setItem("TOKEN", result.token);
+                alert('로그인 되었습니다');
+                location.href = '../index.html';
+            }
+        }
+
+        // post 로 id, pw 값 전달하기
+        const handlePost = (body) => {
+            return new Promise((resolve, reject) => {
+                fetch('http://127.0.0.1:8088/member/login.json', {
+                    method : "POST",
+                    headers : { "Content-Type" : "application/json" },
+                    body : JSON.stringify(body)
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    resolve(data);
+                });
+            })
+        }
+        
+    </script>
     
 </body>
 </html>
