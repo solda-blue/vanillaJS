@@ -25,10 +25,37 @@
                 <label>비밀번호</label>
                 <input type="password" id="pw" />
             </div>
-            <input type="button" id="btn" value="로그인" style="float: right; margin-right: 15px;" />
+            <input type="button" id="btn" value="로그인" style="width: 94%;" />
+            <a href="javascript:kakaoLogin();">
+                <img src="../../assets/kakao_login.png" style="width: 94%;margin-top: 5px;">
+            </a>
         </div>
 
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script>
+        // c8b46a9bc1014bfd27f124b9ca3bc6ab
+        window.Kakao.init("c8b46a9bc1014bfd27f124b9ca3bc6ab");
+
+        function kakaoLogin() {
+            window.Kakao.Auth.login({
+                scope : 'profile_nickname, account_email, gender',
+                success : function(authObj) {
+                    console.log('authObj => ', authObj);
+                    let kakao_token = authObj.access_token;
+                    Kakao.Auth.setAccessToken(kakao_token);
+                    alert('카카오계정으로 로그인 되었습니다.');
+                    location.href = '../index.html';
+                    // window.Kakao.API.request({
+                    //     url : '/v2/user/me',
+                    //     success : res => {
+                    //         const kakao_account = res.kakao_account;
+                    //         console.log('kakao_account => ', kakao_account);
+                    //     }
+                    // });
+                }
+            })
+        }
+
         const id = document.getElementById('id');
         const pw = document.getElementById('pw');
         
