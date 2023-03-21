@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/general.js"></script>
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.1.0/kakao.min.js"
-        integrity="sha384-dpu02ieKC6NUeKFoGMOKz6102CLEWi9+5RQjWSV0ikYSFFd8M3Wp2reIcquJOemx" crossorigin="anonymous"></script>
+    <!-- <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.1.0/kakao.min.js"
+        integrity="sha384-dpu02ieKC6NUeKFoGMOKz6102CLEWi9+5RQjWSV0ikYSFFd8M3Wp2reIcquJOemx" crossorigin="anonymous"></script> -->
     <title>Home</title>
 </head>
 <body>
@@ -20,13 +20,28 @@
     <script>
         window.Kakao.init("c8b46a9bc1014bfd27f124b9ca3bc6ab");
         const logout = document.getElementById('logout');
+        const hi = document.getElementById('hi');
+
         onload = function() {
             if(sessionStorage.getItem("TOKEN") !== null ) {
                 handleUser();
                 document.querySelector('a').style.display = 'none';
             } 
             if(Kakao.Auth.getAccessToken() !== null) {
-                console.log('hi');
+                Kakao.API.request({
+                url: '/v2/user/me',
+                // data : {
+                //     property_keys : ['kakao_account.profile.nickname']
+                // }
+                })
+                .then(function(response) {
+                    console.log(response);
+                    let name = response.kakao_account.profile.nickname;
+                    hi.innerText = `${name} 님 안녕하세요`;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
             } else {
                 console.log('토큰 없음');
             }
@@ -35,7 +50,6 @@
         async function handleUser() {
             const user = await handleToken();
             console.log(user);
-            let hi = document.getElementById('hi')
             if(user.status === 200) {
                 hi.innerText = `${user.result.username} 님 안녕하세요`;
             }
@@ -52,6 +66,8 @@
                         console.log(err);
                     },
                 })
+                location.href = "./index.html";
+                sessionStorage.removeItem('logged');
                 Kakao.Auth.setAccessToken(null);
             };
         })

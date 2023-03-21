@@ -43,6 +43,7 @@
                     console.log('authObj => ', authObj);
                     let kakao_token = authObj.access_token;
                     Kakao.Auth.setAccessToken(kakao_token);
+                    sessionStorage.setItem("logged", true);
                     alert('카카오계정으로 로그인 되었습니다.');
                     location.href = '../index.html';
                     // window.Kakao.API.request({
@@ -73,6 +74,7 @@
             const result = await handlePost(body);
             if(result.status === 200) {
                 sessionStorage.setItem("TOKEN", result.token);
+                sessionStorage.setItem("logged", true);
                 alert('로그인 되었습니다');
                 location.href = '../index.html';
             }

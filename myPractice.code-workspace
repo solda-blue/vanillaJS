@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../myDB"
+		},
+		{
+			"path": "../myTodo"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "myTodo",
+		"liveServer.settings.port": 5501
+	}
+}
